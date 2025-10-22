@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baxter International</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { color: #4CAF50; }
+        .data { margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1 id="share-entity-name">Baxter International</h1>
+    <div class="data">
+        <p><strong>Max Shares Outstanding:</strong> <span id="share-max-value"></span> (FY: <span id="share-max-fy"></span>)</p>
+        <p><strong>Min Shares Outstanding:</strong> <span id="share-min-value"></span> (FY: <span id="share-min-fy"></span>)</p>
+    </div>
+    <script>
+        async function fetchData(cik) {
+            const response = await fetch(`https://data.sec.gov/api/xbrl/companyconcept/CIK${cik}/dei/EntityCommonStockSharesOutstanding.json`, {
+                headers: { 'User-Agent': 'YourAppName/1.0' }
+            });
+            return response.json();
+        }
+
+        async function updateShareData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const cik = urlParams.get('CIK') || '0000010456';
+            const data = await fetchData(cik);
+            const entityName = data.entityName;
+            const shares = data.units.shares.filter(entry => entry.fy > '2020' && !isNaN(entry.val)).map(entry => ({ fy: entry.fy, val: Number(entry.val) }));
+
+            if (shares.length > 0) {
+                const max = shares.reduce((prev, current) => (prev.val > current.val) ? prev : current);
+                const min = shares.reduce((prev, current) => (prev.val < current.val) ? prev : current);
+               
+                document.getElementById('share-entity-name').textContent = entityName;
+                document.getElementById('share-max-value').textContent = max.val;
+                document.getElementById('share-max-fy').textContent = max.fy;
+                document.getElementById('share-min-value').textContent = min.val;
+                document.getElementById('share-min-fy').textContent = min.fy;
+                document.title = entityName;
+            } else {
+                document.body.innerHTML = '<h1>No data available</h1>';
+            }
+        }
+
+        updateShareData();
+    </script>
+</body>
+</html>
