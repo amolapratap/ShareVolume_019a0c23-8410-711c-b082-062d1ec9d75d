@@ -1,1 +1,2 @@
-# ShareVolume_019a0c23-8410-711c-b082-062d1ec9d75d
+# Project Description
+This project fetches common stock shares outstanding data from the SEC for Baxter International (BAX) and presents it in a visually appealing HTML format. It includes functionality to dynamically fetch data for different companies using their CIK numbers.
