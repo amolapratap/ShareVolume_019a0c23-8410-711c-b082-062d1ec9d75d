@@ -1,0 +1,11 @@
+{
+    "entityName": "Baxter International",
+    "max": {
+        "val": 200000000,
+        "fy": "2021"
+    },
+    "min": {
+        "val": 150000000,
+        "fy": "2022"
+    }
+}
